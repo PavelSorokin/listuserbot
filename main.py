@@ -31,8 +31,10 @@ def main():
     def start_cmd(message):
         if message.chat.id in var.admins:
             bot.send_message(message.chat.id, 'Выбери что мне сделать', reply_markup=keyboard.keyboard_admin())
+            bot.delete_state(message.from_user.id, message.chat.id)
         else:
             bot.send_message(message.chat.id, 'Выбери что мне сделать', reply_markup=keyboard.keyboard_user())
+            bot.delete_state(message.from_user.id, message.chat.id)
 
     @bot.message_handler(state="*", commands=['cancel'])
     def cancel_cmd(message):
