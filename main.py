@@ -47,6 +47,10 @@ def main():
         bot.send_message(message.chat.id, 'Удаляем состояния, если все еще не работает отправь мне /start', reply_markup=keyboard.keyboard_remove())
         bot.delete_state(message.from_user.id, message.chat.id) 
 
+    @bot.message_handler(state="*", func=lambda message: message.text == "Назад")
+    def back_to_start(message):
+        start_cmd(message)
+
     @bot.message_handler(state=classes.create_list.name)
     def admin_create_list(message):
         safes_state(bot, message, 'name')
@@ -120,7 +124,7 @@ def main():
     def admin_msg(message):
         if message.text == 'Создать':
 
-                bot.send_message(message.chat.id, 'Как назвать список?', reply_markup=keyboard.keyboard_remove())
+                bot.send_message(message.chat.id, 'Как назвать список?', reply_markup=keyboard.keyboard_back())
                 bot.set_state(message.from_user.id, classes.create_list.name, message.chat.id)
 
         elif message.text == 'Закрыть':

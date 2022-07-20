@@ -2,6 +2,14 @@ import os
 from telebot import types
 from telebot.types import KeyboardButton
 
+def keyboard_back():
+
+    rest = ['Назад']
+    markup=types.ReplyKeyboardMarkup(resize_keyboard=True,row_width=1)
+    row = [KeyboardButton(x) for x in rest]
+    markup.add(*row)
+    return markup
+
 def keyboard_remove():
 
     markup = types.ReplyKeyboardRemove()
@@ -28,6 +36,7 @@ def keyboard_delete():
     markup=types.ReplyKeyboardMarkup(resize_keyboard=True,row_width=1)
     row = [KeyboardButton(x) for x in rest]
     markup.add(*row)
+    markup.add('Назад')
     return markup
 
 def keyboard_write():
@@ -42,4 +51,5 @@ def keyboard_write():
     markup=types.ReplyKeyboardMarkup(resize_keyboard=True,row_width=1)
     row = [KeyboardButton(x) for x in rest]
     markup.add(*row)
+    markup.add('Назад')
     return markup
