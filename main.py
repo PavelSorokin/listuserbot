@@ -75,7 +75,8 @@ def main():
                 bot.send_document(message.chat.id, docs)
                 bot.send_message(message.chat.id, 'Отправляю список: '+doc, reply_markup=keyboard.keyboard_admin())
                 bot.delete_state(message.from_user.id, message.chat.id)
-                os.rename('./lists/'+doc, './lists/close_'+doc)
+                if doc.startswith('close') == False:    
+                    os.rename('./lists/'+doc, './lists/close_'+doc)
         else:
             bot.send_message(message.chat.id, 'Извини, я не нашел список.🤷‍♂️\nПопробуй заново, выбери с помощью всплывающей команды.\nНажни => /start', reply_markup=keyboard.keyboard_admin())
             bot.delete_state(message.from_user.id, message.chat.id)
