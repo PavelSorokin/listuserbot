@@ -8,16 +8,15 @@ def keyboard_remove():
     return markup
 
 def keyboard_admin():
-    rest = ['Создать список','Закрыть список','Удалить список']
+    rest = ['Показать','Создать','Закрыть','Удалить']
     markup=types.ReplyKeyboardMarkup(resize_keyboard=True,row_width=2)
-    markup.add('Показать списки')
     row = [KeyboardButton(x) for x in rest]
     markup.add(*row)
     return markup
 
 def keyboard_user():
 
-    rest = ['Записаться']
+    rest = ['🥳Записаться на мероприятие']
     markup=types.ReplyKeyboardMarkup(resize_keyboard=True,row_width=1)
     row = [KeyboardButton(x) for x in rest]
     markup.add(*row)
