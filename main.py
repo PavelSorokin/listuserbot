@@ -132,6 +132,7 @@ def main():
             name = data['name']
             fio = data['fio']
         with open('./lists/'+name+'.txt','r+') as files:
+            fio = fio.replace('\n', ' ')
             my_list = [x.rstrip() for x in files]
             number = len(my_list) + 1
             files.write(str(number)+'. '+ fio+'\n')
