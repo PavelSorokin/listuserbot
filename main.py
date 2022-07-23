@@ -61,6 +61,24 @@ def main():
         bot.send_message(message.chat.id, 'Спиcок создан: '+ name, reply_markup=keyboard.keyboard_admin())
         bot.delete_state(message.from_user.id, message.chat.id)
 
+    @bot.message_handler(state=classes.read_list.name)
+    def admin_read_list(message):
+        if empty_dir() == False:
+            safes_state(bot, message, 'name')
+            with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
+                doc = data['name']
+                docs = open('./lists/'+doc, 'rb')
+            if os.path.getsize('./lists/'+doc) == 0:
+                bot.send_message(message.chat.id, 'Извини, файл пустой. Его можно только удалить.🤷‍♂️\nПопробуй заново, выбери с помощью всплывающей команды.\nНажни => /start', reply_markup=keyboard.keyboard_admin())
+                bot.delete_state(message.from_user.id, message.chat.id)
+            else:
+                bot.send_document(message.chat.id, docs)
+                bot.send_message(message.chat.id, 'Отправляю список: '+doc, reply_markup=keyboard.keyboard_admin())
+                bot.delete_state(message.from_user.id, message.chat.id)
+        else:
+            bot.send_message(message.chat.id, 'Извини, я не нашел список.🤷‍♂️\nПопробуй заново, выбери с помощью всплывающей команды.\nНажни => /start', reply_markup=keyboard.keyboard_admin())
+            bot.delete_state(message.from_user.id, message.chat.id)
+
     @bot.message_handler(state=classes.close_list.name)
     def admin_close_list(message):
         if empty_dir() == False:
@@ -138,7 +156,17 @@ def main():
             else:
                     bot.send_message(message.chat.id, 'Извини, я ничего не нашел. Попробуй сначала создать🤷‍♂️\nНажни => /start', reply_markup=keyboard.keyboard_admin())
                     bot.delete_state(message.from_user.id, message.chat.id)
+        
+        elif message.text == 'Просмотреть':
 
+            if  empty_dir() == False:
+
+                    bot.send_message(message.chat.id, 'Какой список ты хочешь посмотреть?', reply_markup=keyboard.keyboard_delete())
+                    bot.set_state(message.from_user.id, classes.read_list.name, message.chat.id)
+
+            else:
+                    bot.send_message(message.chat.id, 'Извини, я ничего не нашел. Попробуй сначала создать🤷‍♂️\nНажни => /start', reply_markup=keyboard.keyboard_admin())
+                    bot.delete_state(message.from_user.id, message.chat.id)
         elif message.text == 'Удалить':
 
             if  empty_dir() == False:

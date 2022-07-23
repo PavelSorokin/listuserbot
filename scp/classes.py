@@ -12,3 +12,5 @@ class close_list(StatesGroup):
 class write_user_list(StatesGroup):
     name = State()
     fio = State()
+class read_list(StatesGroup):
+    name = State()
