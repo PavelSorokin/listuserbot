@@ -115,15 +115,20 @@ def main():
     @bot.message_handler(state=classes.write_user_list.name)
     def user_write_list(message):
         safes_state(bot, message, 'name')
-        with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
-            name = data['name']
-            lists = os.listdir('./lists')
-        if name+'.txt' in lists:
-                bot.send_message(message.chat.id, 'Ты выбрал список: '+name+ '\nОтправь свою Фамилию и Имя, чтобы мы закрепили за тобой Номер\nЗапомни, его необходимо будет предъявить на входе🧐', reply_markup=keyboard.keyboard_remove())
-                bot.set_state(message.from_user.id, classes.write_user_list.fio, message.chat.id)
+        if  bot.get_chat_member(var.zerkalo_chat_id,message.from_user.id).status == 'left':
+            bot.send_message(message.chat.id, 'Для записи в список на вход, необходимо быть подписанным на канал\nhttps://t.me/zerkalotver 🤷‍♂️\nПопробуй заново, выбери с помощью всплывающей команды.\nНажни => /start', reply_markup=keyboard.keyboard_user())
+            bot.delete_state(message.from_user.id, message.chat.id)
+        
         else:
-                bot.send_message(message.chat.id, 'Извини, я не нашел список.🤷‍♂️\nПопробуй заново, выбери с помощью всплывающей команды.\nНажни => /start', reply_markup=keyboard.keyboard_user())
-                bot.delete_state(message.from_user.id, message.chat.id)
+            with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
+                name = data['name']
+                lists = os.listdir('./lists')
+            if name+'.txt' in lists:
+                    bot.send_message(message.chat.id, 'Ты выбрал список: '+name+ '\nОтправь свою Фамилию и Имя, чтобы мы закрепили за тобой Номер\nЗапомни, его необходимо будет предъявить на входе🧐', reply_markup=keyboard.keyboard_remove())
+                    bot.set_state(message.from_user.id, classes.write_user_list.fio, message.chat.id)
+            else:
+                    bot.send_message(message.chat.id, 'Извини, я не нашел список.🤷‍♂️\nПопробуй заново, выбери с помощью всплывающей команды.\nНажни => /start', reply_markup=keyboard.keyboard_user())
+                    bot.delete_state(message.from_user.id, message.chat.id)
     
     @bot.message_handler(state=classes.write_user_list.fio)
     def user_write_lists(message):
