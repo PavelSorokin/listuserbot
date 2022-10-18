@@ -14,3 +14,6 @@ class write_user_list(StatesGroup):
     fio = State()
 class read_list(StatesGroup):
     name = State()
+
+class intdeadline(StatesGroup):
+    deadline = State()

@@ -1,6 +1,8 @@
 import config as var
+import deadline as lines
 import telebot
 import os
+import importlib
 from telebot import custom_filters
 from datetime import datetime
 from art import tprint
@@ -28,6 +30,11 @@ def main():
             return True
         else:
             return False
+    def check_deadline(name):
+        with open('./lists/'+name+'.txt','r+') as files:
+            my_list = [x.rstrip() for x in files]
+            number = len(my_list)
+        return number
 
     @bot.message_handler(commands=['help'])
     def help_cmd(message):
@@ -50,6 +57,26 @@ def main():
     @bot.message_handler(state="*", func=lambda message: message.text == "Назад")
     def back_to_start(message):
         start_cmd(message)
+    
+    @bot.message_handler(state=classes.intdeadline.deadline, is_digit=False)
+    def noint(message):
+        bot.send_message(message.chat.id,'Введи только число, без пробелов и символов', parse_mode='Markdown', reply_markup=keyboard.keyboard_back())
+        bot.set_state(message.from_user.id, classes.intdeadline.deadline, message.chat.id) 
+
+    @bot.message_handler(state=classes.intdeadline.deadline, is_digit=True)
+    def yesint(message):  
+        safes_state(bot, message, 'deadline')
+        with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
+                nd = data['deadline']   
+                file = open('./deadline.py', 'r+')
+                file.truncate(0)
+                new_deadline = 'deadline = '+nd
+                file.write(new_deadline)
+                file.close()
+        importlib.reload(lines)        
+        msg_nd = 'Установлено новое количество проходок: '+str(lines.deadline)
+        bot.send_message(message.chat.id, msg_nd, reply_markup=keyboard.keyboard_admin())
+        bot.delete_state(message.from_user.id, message.chat.id)
 
     @bot.message_handler(state=classes.create_list.name)
     def admin_create_list(message):
@@ -124,8 +151,13 @@ def main():
                 name = data['name']
                 lists = os.listdir('./lists')
             if name+'.txt' in lists:
-                    bot.send_message(message.chat.id, 'Ты выбрал список: '+name+ '\nОтправь свою Фамилию и Имя, чтобы мы закрепили за тобой Номер\nЗапомни, его необходимо будет предъявить на входе🧐', reply_markup=keyboard.keyboard_remove())
-                    bot.set_state(message.from_user.id, classes.write_user_list.fio, message.chat.id)
+                if check_deadline(name) < lines.deadline:
+                        bot.send_message(message.chat.id, 'Ты выбрал список: '+name+ '\nОтправь свою Фамилию и Имя, чтобы мы закрепили за тобой Номер\nЗапомни, его необходимо будет предъявить на входе🧐', reply_markup=keyboard.keyboard_remove())
+                        bot.set_state(message.from_user.id, classes.write_user_list.fio, message.chat.id)
+                else:
+                        bot.send_message(message.chat.id, 'Извини, но количество проходок закончилось.🤷‍♂️\nНажни => /start', reply_markup=keyboard.keyboard_user())
+                        bot.delete_state(message.from_user.id, message.chat.id)
+                        bot.send_message(var.stas, 'Количество проходок закончилось, закрой список \nНажни => /start')
             else:
                     bot.send_message(message.chat.id, 'Извини, я не нашел список.🤷‍♂️\nПопробуй заново, выбери с помощью всплывающей команды.\nНажни => /start', reply_markup=keyboard.keyboard_user())
                     bot.delete_state(message.from_user.id, message.chat.id)
@@ -184,6 +216,11 @@ def main():
                     bot.send_message(message.chat.id, 'Извини, я ничего не нашел. Попробуй сначала создать🤷‍♂️\nНажни => /start', reply_markup=keyboard.keyboard_admin())
                     bot.delete_state(message.from_user.id, message.chat.id)
 
+        elif message.text == 'Кол-во проходок':
+            msg_deadline = 'Количество проходок на списки: '+ str(lines.deadline) +'\nОтправь мне новое ЧИСЛО, чтобы изменить количество проходок на ВСЕ списки'
+            bot.send_message(message.chat.id, msg_deadline, reply_markup=keyboard.keyboard_back())
+            bot.set_state(message.from_user.id, classes.intdeadline.deadline, message.chat.id)
+     
 
         elif message.text == 'Показать':
                 files = os.listdir('./lists')

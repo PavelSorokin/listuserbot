@@ -16,7 +16,7 @@ def keyboard_remove():
     return markup
 
 def keyboard_admin():
-    rest = ['Показать','Создать','Закрыть','Удалить','Просмотреть']
+    rest = ['Показать','Создать','Закрыть','Удалить','Просмотреть','Кол-во проходок']
     markup=types.ReplyKeyboardMarkup(resize_keyboard=True,row_width=2)
     row = [KeyboardButton(x) for x in rest]
     markup.add(*row)
