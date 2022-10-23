@@ -157,7 +157,7 @@ def main():
                 else:
                         bot.send_message(message.chat.id, 'Извини, но количество проходок закончилось.🤷‍♂️\nНажни => /start', reply_markup=keyboard.keyboard_user())
                         bot.delete_state(message.from_user.id, message.chat.id)
-                        bot.send_message(var.stas, 'Количество проходок закончилось, закрой список \nНажни => /start')
+                        #bot.send_message(var.stas, 'Количество проходок закончилось, закрой список \nНажни => /start')
             else:
                     bot.send_message(message.chat.id, 'Извини, я не нашел список.🤷‍♂️\nПопробуй заново, выбери с помощью всплывающей команды.\nНажни => /start', reply_markup=keyboard.keyboard_user())
                     bot.delete_state(message.from_user.id, message.chat.id)
