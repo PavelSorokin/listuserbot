@@ -16,7 +16,7 @@ def keyboard_remove():
     return markup
 
 def keyboard_admin():
-    rest = ['Показать','Создать','Закрыть','Удалить','Просмотреть']
+    rest = ['Показать','Создать','Закрыть','Удалить','Просмотреть','Кол-во проходок']
     markup=types.ReplyKeyboardMarkup(resize_keyboard=True,row_width=2)
     row = [KeyboardButton(x) for x in rest]
     markup.add(*row)
@@ -52,4 +52,28 @@ def keyboard_write():
     row = [KeyboardButton(x) for x in rest]
     markup.add(*row)
     markup.add('Назад')
+    return markup
+
+def keyboard_question1():
+
+    rest = ['1','2']
+    markup=types.ReplyKeyboardMarkup(resize_keyboard=True,row_width=2)
+    row = [KeyboardButton(x) for x in rest]
+    markup.add(*row)
+    return markup
+
+def keyboard_question2():
+
+    rest = ['1','2','Какой Рояль?']
+    markup=types.ReplyKeyboardMarkup(resize_keyboard=True,row_width=3)
+    row = [KeyboardButton(x) for x in rest]
+    markup.add(*row)
+    return markup
+
+def keyboard_question3():
+
+    rest = ['Суббота','Рейв','90х']
+    markup=types.ReplyKeyboardMarkup(resize_keyboard=True,row_width=3)
+    row = [KeyboardButton(x) for x in rest]
+    markup.add(*row)
     return markup
