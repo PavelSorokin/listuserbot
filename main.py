@@ -169,10 +169,10 @@ def main():
 
     @bot.message_handler(state=classes.write_user_list.name)
     def user_write_list(message):
-            safes_state(bot, message, 'name')
+        # safes_state(bot, message, 'name')
         # if  bot.get_chat_member(var.zerkalo_chat_id,message.from_user.id).status == 'left':
-        #     bot.send_message(message.chat.id, 'Для записи в список на вход, необходимо быть подписанным на канал\nhttps://t.me/zerkalotver 🤷‍♂️\nПопробуй заново, выбери с помощью всплывающей команды.\nНажни => /start', reply_markup=keyboard.keyboard_user())
-        #     bot.delete_state(message.from_user.id, message.chat.id)
+        #         bot.send_message(message.chat.id, 'Для записи в список на вход, необходимо быть подписанным на канал\nhttps://t.me/zerkalotver 🤷‍♂️\nПопробуй заново, выбери с помощью всплывающей команды.\nНажни => /start', reply_markup=keyboard.keyboard_user())
+        #         bot.delete_state(message.from_user.id, message.chat.id)
         
         # else:
             with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
