@@ -1,7 +1,8 @@
 from telebot.storage import StateMemoryStorage
 
 main_bot_token = '5320419353:AAEPbL94lz3PG7blljjwqT4K0f0FRCyabdI'
-timeout_seconds = 60
+timeout_seconds = 10
+timeout_gif = './files/timeout_cat.mp4'
 admins = [420553555] 
 stas = 420553555
 #394011279,396471113,394011279,396471113

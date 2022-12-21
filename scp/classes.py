@@ -23,3 +23,6 @@ class answer(StatesGroup):
     answer1 = State()
     answer2 = State()
     answer3 = State()
+
+class timeout(StatesGroup):
+    timeout = State()

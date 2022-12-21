@@ -24,12 +24,27 @@ def main():
     def safes_state(bot, message, state):
         with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
             data[state] = message.text
-    def empty_dir():       
+    def empty_dir():
+        ls = []       
+        lists = os.listdir('./lists')
+        if len(lists) != 0:
+            for i in lists:
+                 if (i.startswith('close')) == False:
+                    ls.append(i)
+        if len(lists) == 0 and ls == []:
+            return True
+        elif len(lists) !=0 and ls == []:
+            return True
+        else:
+            return False
+
+    def empty_dir_admin():       
         lists = os.listdir('./lists')
         if len(lists) == 0:
             return True
         else:
-            return False
+            return False    
+    
     def check_deadline(name):
         with open('./lists/'+name+'.txt','r+') as files:
             my_list = [x.rstrip() for x in files]
@@ -90,7 +105,7 @@ def main():
 
     @bot.message_handler(state=classes.read_list.name)
     def admin_read_list(message):
-        if empty_dir() == False:
+        if empty_dir_admin() == False:
             safes_state(bot, message, 'name')
             with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
                 doc = data['name']
@@ -108,7 +123,7 @@ def main():
 
     @bot.message_handler(state=classes.close_list.name)
     def admin_close_list(message):
-        if empty_dir() == False:
+        if empty_dir_admin() == False:
             safes_state(bot, message, 'name')
             with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
                 doc = data['name']
@@ -128,7 +143,7 @@ def main():
 
     @bot.message_handler(state=classes.delete_list.name)
     def admin_delete_list(message):
-        if empty_dir() == False:
+        if empty_dir_admin() == False:
             safes_state(bot, message, 'name')
             with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
                 name = data['name']
@@ -157,19 +172,34 @@ def main():
             answer1 = data['answer1']
             answer2 = data['answer2']
             answer3 = data['answer3']
-        print(answer1,answer2,answer3)
         if answer1 == '2' and answer2 == '1' and answer3 == 'Суббота':
-                bot.delete_state(message.from_user.id, message.chat.id)
                 bot.send_message(message.chat.id, 'Отлично! Тест пройден\nПожалуйста, выбери список по кнопке ниже⬇️', reply_markup=keyboard.keyboard_write())
+                bot.delete_state(message.from_user.id, message.chat.id)
                 bot.set_state(message.from_user.id, classes.write_user_list.name, message.chat.id)
         else: 
             bot.delete_state(message.from_user.id, message.chat.id)
             bot.send_message(message.chat.id, 'Все плохо, ты завалил Тест 😱\nНо у тебя есть возможность попробовать снова! Вперед 💪', reply_markup=keyboard.keyboard_user())
-
-
+            timeouts = datetime.now()
+            bot.set_state(message.from_user.id, classes.timeout, message.chat.id)
+            with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
+                data['timeout'] = timeouts
+    @bot.message_handler(state=classes.timeout)
+    def __timeouts(message):
+            with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
+                __timeouts =  data['timeout']
+            now = datetime.now()
+            if (now-datetime.strptime(str(__timeouts),"%Y-%m-%d %H:%M:%S.%f")).seconds < var.timeout_seconds:
+                bot.send_message(message.chat.id, 'Проходить тест можно раз в 5 минут\nНапиши, пожалуйста, чуть позже.', reply_markup=keyboard.keyboard_user())
+                msg_handler.sends_doc(bot,message,var.timeout_gif)
+            else:
+                bot.delete_state(message.from_user.id, message.chat.id)
+                bot.send_message(message.chat.id, 'Вижу что хочешь записать на мероприятие.\nНо для начала пройди тест⬇️')
+                bot.send_message(message.chat.id, str(f'Вопрос 1:\n{var.question1}'), reply_markup=keyboard.keyboard_question1())
+                bot.set_state(message.from_user.id, classes.answer.answer1, message.chat.id)
+                
     @bot.message_handler(state=classes.write_user_list.name)
     def user_write_list(message):
-        # safes_state(bot, message, 'name')
+            safes_state(bot, message, 'name')
         # if  bot.get_chat_member(var.zerkalo_chat_id,message.from_user.id).status == 'left':
         #         bot.send_message(message.chat.id, 'Для записи в список на вход, необходимо быть подписанным на канал\nhttps://t.me/zerkalotver 🤷‍♂️\nПопробуй заново, выбери с помощью всплывающей команды.\nНажни => /start', reply_markup=keyboard.keyboard_user())
         #         bot.delete_state(message.from_user.id, message.chat.id)
@@ -214,7 +244,7 @@ def main():
 
         elif message.text == 'Закрыть':
 
-            if  empty_dir() == False:
+            if  empty_dir_admin() == False:
 
                     bot.send_message(message.chat.id, 'Какой список закрыть?', reply_markup=keyboard.keyboard_delete())
                     bot.set_state(message.from_user.id, classes.close_list.name, message.chat.id)
@@ -225,7 +255,7 @@ def main():
         
         elif message.text == 'Просмотреть':
 
-            if  empty_dir() == False:
+            if  empty_dir_admin() == False:
 
                     bot.send_message(message.chat.id, 'Какой список ты хочешь посмотреть?', reply_markup=keyboard.keyboard_delete())
                     bot.set_state(message.from_user.id, classes.read_list.name, message.chat.id)
@@ -235,7 +265,7 @@ def main():
                     bot.delete_state(message.from_user.id, message.chat.id)
         elif message.text == 'Удалить':
 
-            if  empty_dir() == False:
+            if  empty_dir_admin() == False:
 
                     bot.send_message(message.chat.id, 'Какой список удалить?', reply_markup=keyboard.keyboard_delete())
                     bot.set_state(message.from_user.id, classes.delete_list.name, message.chat.id)
@@ -267,9 +297,6 @@ def main():
                     bot.send_message(message.chat.id, 'Вижу что хочешь записать на мероприятие.\nНо для начала пройди тест⬇️')
                     bot.send_message(message.chat.id, str(f'Вопрос 1:\n{var.question1}'), reply_markup=keyboard.keyboard_question1())
                     bot.set_state(message.from_user.id, classes.answer.answer1, message.chat.id)
-                # if empty_dir() == False:
-                #         bot.send_message(message.chat.id, 'Пожалуйста, выбери список по кнопке ниже⬇️', reply_markup=keyboard.keyboard_write())
-                #         bot.set_state(message.from_user.id, classes.write_user_list.name, message.chat.id)
                 else:
                         bot.send_message(message.chat.id, 'Извини, но сейчас нет открытых списков для записи 🤷‍♂️\nНажни => /start', reply_markup=keyboard.keyboard_user())
                         bot.delete_state(message.from_user.id, message.chat.id)
